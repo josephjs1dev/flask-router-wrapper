@@ -60,9 +60,12 @@ class _BaseRouter:
   def delete(self, endpoint: str, *handlers: List[Union[Callable, Middleware]], **options):
     self.route(endpoint, ["DELETE"], *handlers)
 
+  def option(self, endpoint: str, *handlers: List[Union[Callable, Middleware]], **options):
+    self.route(endpoint, ["OPTION"], *handlers)
+
   def route(self, endpoint: str, methods: List[str], *handlers: List[Union[Callable, Middleware]],
             **options):
-    accepted_methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
+    accepted_methods = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTION"]
 
     if len(methods) == 0:
       raise RouterException("No method given")

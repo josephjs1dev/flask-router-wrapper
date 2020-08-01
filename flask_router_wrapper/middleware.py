@@ -3,8 +3,6 @@ from abc import ABC, abstractmethod
 
 
 class Middleware(ABC):
-  __name__ = "Middleware"
-
   def __init__(self):
     self.__next = None
 
