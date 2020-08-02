@@ -44,14 +44,16 @@ def test_callable_instance_success(app: Flask):
 def test_not_callable_instance_middleware(app: Flask):
   wrapper = RouterWrapper(app)
   err = None
-  
-  try: 
+
+  try:
     wrapper.use(NotCallableMiddleware())
   except RouterException as e:
     err = e
 
   assert err != None
-  assert str(err) == "Only function or instance which is callable or inherits Middleware can be given as parameter"
+  assert str(
+      err
+  ) == "Only function or instance which is callable or inherits Middleware can be given as parameter"
 
 
 def test_use_for_group_router(app: Flask):
@@ -66,7 +68,7 @@ def test_use_for_group_router(app: Flask):
   client = app.test_client("/router")
   res = client.get("/router")
 
-  assert_value_json_handler(res, 3) 
+  assert_value_json_handler(res, 3)
 
 
 def test_use_for_group_blueprint_router(app: Flask):
@@ -81,4 +83,4 @@ def test_use_for_group_blueprint_router(app: Flask):
   client = app.test_client("/blueprint")
   res = client.get("/blueprint")
 
-  assert_value_json_handler(res, 3) 
+  assert_value_json_handler(res, 3)

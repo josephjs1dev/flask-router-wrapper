@@ -87,7 +87,10 @@ class _BaseRouter:
   def _check_callable_or_middleware(cls, callable_list: List[Union[Callable, Middleware]]):
     for c in callable_list:
       if not inspect.isclass(c) and (isinstance(c, Middleware) or callable(c)): pass
-      else: raise RouterException("Only function or instance which is callable or inherits Middleware can be given as parameter")
+      else:
+        raise RouterException(
+            "Only function or instance which is callable or inherits Middleware can be given as parameter"
+        )
 
   @classmethod
   def _check_handlers(cls, handlers: List[Union[Callable, Middleware]]):

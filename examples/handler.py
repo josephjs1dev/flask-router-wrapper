@@ -3,7 +3,6 @@ import time
 from flask import jsonify, request
 from flask_router_wrapper import Middleware
 
-
 users = {}
 
 
@@ -65,4 +64,3 @@ def update_user(username):
   users[username] = user_json
 
   return jsonify(user_json)
-

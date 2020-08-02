@@ -23,12 +23,12 @@ def test_router_wrapper_success(app: Flask, http_method: str):
 def test_router_empty_handler(app: Flask):
   wrapper = RouterWrapper(app)
   err = None
-  
+
   try:
     wrapper.get('/')
   except RouterException as e:
     err = e
-  
+
   assert err != None
   assert str(err) == "No handler given"
 
@@ -36,7 +36,7 @@ def test_router_empty_handler(app: Flask):
 def test_router_not_callable(app: Flask):
   wrapper = RouterWrapper(app)
   err = None
-  
+
   import inspect
 
   print(callable('not_a_handler'))
@@ -44,9 +44,11 @@ def test_router_not_callable(app: Flask):
     wrapper.get('/', 'not_a_handler')
   except RouterException as e:
     err = e
-  
+
   assert err != None
-  assert str(err) == "Only function or instance which is callable or inherits Middleware can be given as parameter" 
+  assert str(
+      err
+  ) == "Only function or instance which is callable or inherits Middleware can be given as parameter"
 
 
 def test_router_wrapper_route_success(app: Flask):
@@ -59,7 +61,7 @@ def test_router_wrapper_route_success(app: Flask):
   post_res = client.post('/')
 
   assert_index_handler_response(get_res)
-  assert_index_handler_response(post_res) 
+  assert_index_handler_response(post_res)
 
   put_res = client.put('/')
   assert put_res.status_code == 405
@@ -69,7 +71,7 @@ def test_router_wrapper_route_not_accepted(app: Flask):
   wrapper = RouterWrapper(app)
   err = None
 
-  try: 
+  try:
     wrapper.route('/', ["OTHER_NOT_ACCEPTED_METHOD"], index_handler)
   except RouterException as e:
     err = e
@@ -82,10 +84,10 @@ def test_router_wrapper_route_empty_method(app: Flask):
   wrapper = RouterWrapper(app)
   err = None
 
-  try: 
+  try:
     wrapper.route('/', [], index_handler)
   except RouterException as e:
     err = e
 
   assert err != None
-  assert str(err) == "No method given" 
+  assert str(err) == "No method given"

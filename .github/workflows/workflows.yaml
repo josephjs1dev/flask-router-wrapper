@@ -16,7 +16,6 @@ jobs:
       matrix:
         include:
           - {name: '3-8-linux', python: '3.8', os: ubuntu-latest}
-          - {name: '3.8-mac', python: '3.8', os: macos-latest}
           - {name: '3.7-linux', python: '3.7', os: ubuntu-latest}
           - {name: '3.6-linux', python: '3.6', os: ubuntu-latest}  
     steps:
