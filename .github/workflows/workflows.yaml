@@ -1,0 +1,43 @@
+name: Flask Router Wrapper Dev Workflow
+on: 
+  push:
+    branches:
+      - '*'
+  pull_requests:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {name: '3-8-linux', python: '3.8', os: ubuntu-latest}
+          - {name: '3.8-mac', python: '3.8', os: macos-latest}
+          - {name: '3.7-linux', python: '3.7', os: ubuntu-latest}
+          - {name: '3.6-linux', python: '3.6', os: ubuntu-latest}  
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup python
+        uses: actions/setup-python@master
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Update pip
+        run: |
+          pip install -U wheel
+          pip install -U setuptools
+          python -m pip install -U pip
+      - name: Install dependencies
+        run: pip install pytest pytest-cov flask
+      - name: Generate coverage report
+        run: pytest --cov-report=xml --cov=flask_router_wrapper ./tests
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          env_vars: OS,PYTHON
+          fail_ci_if_error: true
