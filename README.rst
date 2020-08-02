@@ -13,7 +13,7 @@ TODO
 - [X] Add unittest
 - [ ] Add docs
 
-.. |Build Status| image:: https://github.com/josephsalimin/flask-router-wrapper/workflows/Flask%20Router%20Wrapper%20Dev%20Workflow/badge.svg
+.. |Build Status| image:: https://github.com/josephsalimin/flask-router-wrapper/workflows/Build/badge.svg
    :target: https://github.com/josephsalimin/flask-router-wrapper/actions
 .. |Coverage| image:: https://codecov.io/gh/josephsalimin/flask-router-wrapper/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/josephsalimin/flask-router-wrapper
