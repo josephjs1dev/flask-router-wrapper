@@ -15,9 +15,9 @@ def main():
   user_group = BlueprintRouter("user", "user", url_prefix="/user")
   user_group.get('', get_users)
   user_group.get('/<username>', get_user)
-  user_group.post('', AdminMiddleware, add_user)
-  user_group.put('/<username>', AdminMiddleware, update_user)
-  user_group.delete('/<username>', AdminMiddleware, delete_user)
+  user_group.post('', AdminMiddleware(), add_user)
+  user_group.put('/<username>', AdminMiddleware(), update_user)
+  user_group.delete('/<username>', AdminMiddleware(), delete_user)
 
   wrapper.group('', user_group)
   wrapper.execute()

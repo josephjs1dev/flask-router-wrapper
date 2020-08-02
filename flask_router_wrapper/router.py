@@ -21,6 +21,9 @@ class _BaseRouter:
 
   def group(self, prefix: str, router: Union["Router", "BlueprintRouter"],
             *middleware: List[Union[Middleware, Callable]]):
+    if not (isinstance(router, Router) or isinstance(router, BlueprintRouter)):
+      raise RouterException("Not a Router or BlueprintRouter")
+
     middleware = list(middleware)
     self._check_callable_or_middleware(middleware)
 
@@ -83,13 +86,8 @@ class _BaseRouter:
   @classmethod
   def _check_callable_or_middleware(cls, callable_list: List[Union[Callable, Middleware]]):
     for c in callable_list:
-      if (inspect.isclass(c) and issubclass(c, Middleware)) or isinstance(
-          c, Middleware) or callable(c):
-        pass
-      else:
-        raise RouterException(
-            "Only function or class which is callable or inherits Middleware can be given as parameter"
-        )
+      if not inspect.isclass(c) and (isinstance(c, Middleware) or callable(c)): pass
+      else: raise RouterException("Only function or instance which is callable or inherits Middleware can be given as parameter")
 
   @classmethod
   def _check_handlers(cls, handlers: List[Union[Callable, Middleware]]):
@@ -105,12 +103,9 @@ class _BaseRouter:
     middleware = handlers[0:]
 
     for m in middleware:
-      if inspect.isclass(m) and issubclass(m, Middleware):
-        instance: Middleware = m()
-        handler = instance.add_next(handler)
-      elif isinstance(m, Middleware):
+      if isinstance(m, Middleware):
         handler = m.add_next(handler)
-      elif callable(m):
+      elif not inspect.isclass(m) and callable(m):
         mid = _FunctionMiddleware(m)
         handler = mid.add_next(handler)
       else:
@@ -120,7 +115,11 @@ class _BaseRouter:
     return handler
 
 
-class BlueprintRouter(_BaseRouter):
+class Router(_BaseRouter):
+  pass
+
+
+class BlueprintRouter(Router):
   def __init__(self, name, import_name, url_prefix=None, **kwargs):
     super().__init__()
     self.name = name
@@ -158,11 +157,7 @@ class BlueprintRouter(_BaseRouter):
       self._routes[key] = middleware + handlers
 
 
-class Router(_BaseRouter):
-  pass
-
-
-class RouterWrapper(_BaseRouter):
+class RouterWrapper(Router):
   def __init__(self, app: Flask):
     super().__init__()
     self.app = app

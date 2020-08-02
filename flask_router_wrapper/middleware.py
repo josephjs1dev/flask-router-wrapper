@@ -1,6 +1,8 @@
 from types import FunctionType
 from abc import ABC, abstractmethod
 
+from .exception import RouterException
+
 
 class Middleware(ABC):
   def __init__(self):
@@ -12,7 +14,7 @@ class Middleware(ABC):
 
   @abstractmethod
   def _exec(self, next_function, *args, **kwargs):
-    pass
+    raise RouterException("Not implemented")
 
   def __call__(self, *args, **kwargs):
     return self._exec(self.__next, *args, **kwargs)

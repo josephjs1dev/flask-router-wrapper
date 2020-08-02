@@ -12,15 +12,11 @@ def log_timestamp_middleware(next_function, *args, **kwargs):
   return next_function(*args, **kwargs)
 
 
-def not_authorized():
-  return jsonify({"error": "not_authorized"}), 401
-
-
 class AdminMiddleware(Middleware):
   def _exec(self, next_function, *args, **kwargs):
     token = request.headers.get("token", "")
     if token == "":
-      return not_authorized()
+      return jsonify({"error": "not_authorized"}), 401
 
     return next_function(*args, **kwargs)
 

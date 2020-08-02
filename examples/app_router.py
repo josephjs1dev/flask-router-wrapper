@@ -14,9 +14,9 @@ def main():
   # User domain
   wrapper.get('/user', get_users)
   wrapper.get('/user/<username>', get_user)
-  wrapper.post('/user', AdminMiddleware, add_user)
-  wrapper.put('/user/<username>', AdminMiddleware, update_user)
-  wrapper.delete('/user/<username>', AdminMiddleware, delete_user)
+  wrapper.post('/user', AdminMiddleware(), add_user)
+  wrapper.put('/user/<username>', AdminMiddleware(), update_user)
+  wrapper.delete('/user/<username>', AdminMiddleware(), delete_user)
 
   wrapper.execute()
 
