@@ -27,6 +27,7 @@ Tests
 Test can be run using pytest. 
 
 .. code:: bash
+
     $ pytest --cov-report=xml --cov=flask_router_wrapper ./tests
 
 Contributing
