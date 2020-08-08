@@ -7,7 +7,10 @@ from .exception import RouterException
 from .middleware import Middleware, _FunctionMiddleware
 
 
-class _BaseRouter:
+class Router:
+  """
+  Defines basic method to add routing rules to handler function in your web application.
+  """
   def __init__(self):
     self._global_middleware: List[Union[Middleware, Callable]] = []
     self._routes: Dict[Tuple[str], List[Callable]] = {}
@@ -15,12 +18,26 @@ class _BaseRouter:
     self._blueprint_routes: List[BlueprintRouter] = []
 
   def use(self, *middleware: List[Union[Middleware, Callable]]):
+    """
+    Inserts global middleware
+
+    :param middleware:
+    """
     middleware = list(middleware)
     self._check_callable_or_middleware(middleware)
     self._global_middleware += middleware
 
   def group(self, prefix: str, router: Union["Router", "BlueprintRouter"],
             *middleware: List[Union[Middleware, Callable]]):
+    """
+    Groups router
+
+    :param prefix:
+    :param router:
+    :param middleware:
+
+    :raises RouterException:
+    """
     if not (isinstance(router, Router) or isinstance(router, BlueprintRouter)):
       raise RouterException("Not a Router or BlueprintRouter")
 
@@ -49,25 +66,77 @@ class _BaseRouter:
       self._blueprint_routes.append(blueprint_route)
 
   def get(self, endpoint: str, *handlers: List[Union[Callable, Middleware]], **options):
+    """
+    Add HTTP GET method
+
+    :param endpoint:
+    :param handlers:
+    :param options:
+    """
     self.route(endpoint, ["GET"], *handlers)
 
   def post(self, endpoint: str, *handlers: List[Union[Callable, Middleware]], **options):
+    """
+    Add HTTP POST method
+
+    :param endpoint:
+    :param handlers:
+    :param options:
+    """
     self.route(endpoint, ["POST"], *handlers)
 
   def put(self, endpoint: str, *handlers: List[Union[Callable, Middleware]], **options):
+    """
+    Add HTTP PUT method
+
+    :param endpoint:
+    :param handlers:
+    :param options:
+    """
     self.route(endpoint, ["PUT"], *handlers)
 
   def patch(self, endpoint: str, *handlers: List[Union[Callable, Middleware]], **options):
+    """
+    Add HTTP PATCH method
+
+    :param endpoint:
+    :param handlers:
+    :param options:
+    """
     self.route(endpoint, ["PATCH"], *handlers)
 
   def delete(self, endpoint: str, *handlers: List[Union[Callable, Middleware]], **options):
+    """
+    Add HTTP DELETE method
+
+    :param endpoint:
+    :param handlers:
+    :param options:
+    """
     self.route(endpoint, ["DELETE"], *handlers)
 
   def option(self, endpoint: str, *handlers: List[Union[Callable, Middleware]], **options):
+    """
+    Add HTTP OPTION method
+
+    :param endpoint:
+    :param handlers:
+    :param options:
+    """
     self.route(endpoint, ["OPTION"], *handlers)
 
   def route(self, endpoint: str, methods: List[str], *handlers: List[Union[Callable, Middleware]],
             **options):
+    """
+    Adds HTTP route rules definition
+
+    :param endpoint:
+    :param methods:
+    :param handlers:
+    :param options:
+
+    :raises RouterException:
+    """
     accepted_methods = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTION"]
 
     if len(methods) == 0:
@@ -118,11 +187,10 @@ class _BaseRouter:
     return handler
 
 
-class Router(_BaseRouter):
-  pass
-
-
 class BlueprintRouter(Router):
+  """
+  Unique router for Flask Blueprint
+  """
   def __init__(self, name, import_name, url_prefix=None, **kwargs):
     super().__init__()
     self.name = name
@@ -131,6 +199,15 @@ class BlueprintRouter(Router):
     self.kwargs = kwargs
 
   def group(self, prefix: str, router: "Router", *middleware: List[Union[Callable, Middleware]]):
+    """
+    Overrides Router group method
+
+    :param prefix:
+    :param router:
+    :param middleware:
+
+    :raises RouterException:
+    """
     if not issubclass(type(router), Router) or len(router._blueprint_routes) > 0:
       raise RouterException("Only Core.Router class can be added")
 
@@ -161,11 +238,21 @@ class BlueprintRouter(Router):
 
 
 class RouterWrapper(Router):
+  """
+  Wrapper for Flask Application to add routing rules without the need to use Flask Application decorator.
+  This class extends Router object and therefor defines same methods from Router class.
+  Need to run execute before running Flask application to actually defines routing to actual application.
+  """
   def __init__(self, app: Flask):
     super().__init__()
     self.app = app
 
   def execute(self):
+    """
+    Add routing rules definition to Flask application
+    First adds normal routing rules that are defined first, 
+    then registers flask blueprint from defined list of BlueprintRouter instances that are added to the wrapper.
+    """
     for key, handlers in self._routes.items():
       endpoint, req_types = key
       name = endpoint + req_types
@@ -184,5 +271,11 @@ class RouterWrapper(Router):
       self.app.register_blueprint(blueprint_route.build_blueprint(),
                                   url_prefix=blueprint_route.url_prefix)
 
-  def add_error_handler(self, class_type: Type[Exception], handler: Callable):
-    self.app.register_error_handler(class_type, handler)
+  def register_error_handler(self, code_or_exception, handler: Callable):
+    """
+    Register error handler to flask application
+
+    :param code_or_exception:
+    :param handler:
+    """
+    self.app.register_error_handler(error_type, handler)
