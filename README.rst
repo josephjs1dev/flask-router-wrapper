@@ -14,12 +14,20 @@ Install the extension with using pip, or easy\_install.
 
 .. code:: bash
 
-    $ pip install -U flask-router-wrapper
+    $ pip install flask-router-wrapper
 
 Examples
 --------
 
 Example can be seen in `here <https://github.com/josephsalimin/flask-router-wrapper/tree/master/examples>`__ 
+
+Tests
+-----
+
+Test can be run using pytest. 
+
+.. code:: bash
+    $ pytest --cov-report=xml --cov=flask_router_wrapper ./tests
 
 Contributing
 ------------
