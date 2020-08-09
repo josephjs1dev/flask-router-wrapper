@@ -19,12 +19,12 @@ Install the extension with using pip, or easy\_install.
 Examples
 --------
 
-Example can be seen in `here <https://github.com/josephsalimin/flask-router-wrapper/tree/master/examples>`__ 
+Examples can be seen in `here <https://github.com/josephsalimin/flask-router-wrapper/tree/master/examples>`__ 
 
 Tests
 -----
 
-Test can be run using pytest. 
+Tests can be run using pytest. 
 
 .. code:: bash
 

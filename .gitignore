@@ -5,6 +5,9 @@ __pycache__
 .coverage
 coverage.xml
 docs/build
+build
+dist
+*.egg-info
 
 # IDE related
 .vscode
